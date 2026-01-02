@@ -1,9 +1,9 @@
 const jwt = require("jsonwebtoken");
+const User = require("../models/user");
 
-exports.protect = (req, res, next) => {
+exports.protect = async (req, res, next) => {
   let token;
 
-  // Expect: Authorization: Bearer <token>
   if (
     req.headers.authorization &&
     req.headers.authorization.startsWith("Bearer")
@@ -12,22 +12,26 @@ exports.protect = (req, res, next) => {
   }
 
   if (!token) {
-    return res.status(401).json({ message: "Not authorized, token missing" });
+    return res.status(401).json({ message: "Unauthorized" });
   }
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    req.user = decoded; // { id, role }
+    req.user = await User.findById(decoded.id).select("-password");
+
+    if (!req.user) {
+      return res.status(401).json({ message: "User not found" });
+    }
+
     next();
-  } catch (err) {
-    return res.status(401).json({ message: "Not authorized, token invalid" });
+  } catch (error) {
+    return res.status(401).json({ message: "Token invalid" });
   }
 };
 
-// Allow only providers
 exports.providerOnly = (req, res, next) => {
   if (req.user.role !== "provider") {
-    return res.status(403).json({ message: "Providers only" });
+    return res.status(403).json({ message: "Access denied" });
   }
   next();
 };
