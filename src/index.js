@@ -6,9 +6,10 @@ const profileRoutes = require("./routes/profileRoutes");
 const dashboardRoutes = require("./routes/dashboardRoutes");
 const mongoose = require("mongoose");
 const cors = require("cors");
+const authRoutes = require("./routes/authRoutes");
+
 require("dotenv").config();
 
-const authRoutes = require("./routes/authRoutes");
 
 const app = express();
 
