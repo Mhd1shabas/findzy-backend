@@ -5,11 +5,12 @@ require("dotenv").config();
 
 /* ---------- ROUTES ---------- */
 const authRoutes = require("./src/routes/authRoutes");
-const reviewRoutes = require("./src/routes/reviewRoutes");
-const providerRoutes = require("./src/routes/providerRoutes");
-const statsRoutes = require("./src/routes/statsRoutes");
-const profileRoutes = require("./src/routes/profileRoutes");
 const dashboardRoutes = require("./src/routes/dashboardRoutes");
+const profileRoutes = require("./src/routes/profileRoutes");
+const providerRoutes = require("./src/routes/providerRoutes");
+const reviewRoutes = require("./src/routes/reviewRoutes");
+const statsRoutes = require("./src/routes/statsRoutes");
+
 
 const app = express();
 
