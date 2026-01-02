@@ -1,26 +1,31 @@
 const User = require("../models/user");
 
-// Update provider profile
-exports.updateProfile = async (req, res) => {
+// GET provider profile
+exports.getMyProfile = async (req, res) => {
+  try {
+    const user = await User.findById(req.user._id).select(
+      "businessName category location about"
+    );
+
+    res.json(user);
+  } catch (err) {
+    res.status(500).json({ message: "Failed to load profile" });
+  }
+};
+
+// UPDATE provider profile
+exports.updateMyProfile = async (req, res) => {
   try {
     const { businessName, category, location, about } = req.body;
 
     const user = await User.findByIdAndUpdate(
-      req.user.id,
+      req.user._id,
       { businessName, category, location, about },
       { new: true }
     );
 
-    res.json({
-      message: "Profile updated successfully",
-      profile: {
-        businessName: user.businessName,
-        category: user.category,
-        location: user.location,
-        about: user.about,
-      },
-    });
+    res.json({ message: "Profile updated successfully", user });
   } catch (err) {
-    res.status(500).json({ message: "Profile update failed" });
+    res.status(500).json({ message: "Failed to update profile" });
   }
 };
