@@ -2,17 +2,19 @@ const User = require("../models/user");
 
 exports.getProviderStats = async (req, res) => {
   try {
-    const user = await User.findById(req.user.id);
+    const user = await User.findById(req.user._id);
 
     res.json({
-      profileViews: user.profileViews,
-      leads: user.leads,
-      whatsappClicks: user.whatsappClicks,
+      profileViews: user.profileViews || 0,
+      leads: user.leads || 0,
+      whatsappClicks: user.whatsappClicks || 0,
     });
   } catch (err) {
+    console.error(err);
     res.status(500).json({ message: "Failed to fetch stats" });
   }
 };
+
 // Increase profile views
 exports.incrementProfileViews = async (req, res) => {
   try {
