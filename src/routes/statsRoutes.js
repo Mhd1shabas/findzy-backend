@@ -1,7 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const  protect = require("../middleware/authMiddleware");
-const providerOnly = require("../middleware/providerOnly");
+const { protect, providerOnly = require("../middleware/authMiddleware");
 const {
   getProviderStats,
   incrementProfileViews,
