@@ -39,21 +39,19 @@ exports.login = async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    console.log("👉 LOGIN BODY:", req.body);
+    console.log("LOGIN REQUEST:", email);
 
     const user = await User.findOne({ email });
-    console.log("👉 USER FROM DB:", user);
+    console.log("USER FOUND:", user);
 
     if (!user) {
-      console.log("❌ USER NOT FOUND");
       return res.status(400).json({ message: "Invalid credentials" });
     }
 
     const isMatch = await bcrypt.compare(password, user.password);
-    console.log("👉 PASSWORD MATCH RESULT:", isMatch);
+    console.log("PASSWORD MATCH:", isMatch);
 
     if (!isMatch) {
-      console.log("❌ PASSWORD DOES NOT MATCH");
       return res.status(400).json({ message: "Invalid credentials" });
     }
 
@@ -64,16 +62,14 @@ exports.login = async (req, res) => {
     );
 
     res.json({
-      message: "Login successful",
       token,
       user: {
-        id: user._id,
-        email: user.email,
+        _id: user._id,
         role: user.role,
       },
     });
   } catch (err) {
-    console.error("LOGIN ERROR:", err);
+    console.error(err);
     res.status(500).json({ message: "Login failed" });
   }
 };
