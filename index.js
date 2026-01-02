@@ -1,35 +1,34 @@
 const express = require("express");
-const reviewRoutes = require("./routes/reviewRoutes");
-const providerRoutes = require("./routes/providerRoutes");
-const statsRoutes = require("./routes/statsRoutes");
-const profileRoutes = require("./routes/profileRoutes");
-const dashboardRoutes = require("./routes/dashboardRoutes");
 const mongoose = require("mongoose");
 const cors = require("cors");
-const authRoutes = require("./routes/authRoutes");
-
 require("dotenv").config();
 
+/* ---------- ROUTES ---------- */
+const authRoutes = require("./src/routes/authRoutes");
+const reviewRoutes = require("./src/routes/reviewRoutes");
+const providerRoutes = require("./src/routes/providerRoutes");
+const statsRoutes = require("./src/routes/statsRoutes");
+const profileRoutes = require("./src/routes/profileRoutes");
+const dashboardRoutes = require("./src/routes/dashboardRoutes");
 
 const app = express();
 
 /* ---------- MIDDLEWARE ---------- */
 app.use(cors());
 app.use(express.json());
+
+/* ---------- API ROUTES ---------- */
+app.use("/api/auth", authRoutes);
+app.use("/api/providers", providerRoutes);
+app.use("/api/reviews", reviewRoutes);
 app.use("/api/stats", statsRoutes);
 app.use("/api/dashboard", dashboardRoutes);
 app.use("/api/profile", profileRoutes);
-app.use("/api/providers", providerRoutes);
-app.use("/api/reviews", reviewRoutes);
 
-
-
-/* ---------- ROUTES ---------- */
+/* ---------- TEST ROUTE ---------- */
 app.get("/", (req, res) => {
   res.send("Findzy API running");
 });
-
-app.use("/api/auth", authRoutes);
 
 /* ---------- SERVER + DB ---------- */
 const PORT = process.env.PORT || 5000;
