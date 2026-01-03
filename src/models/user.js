@@ -16,6 +16,10 @@ const userSchema = new mongoose.Schema(
       sparse: true,
     },
 
+    whatsapp: {
+      type: String,
+    },
+
     password: { type: String, required: true },
 
     role: {
@@ -24,41 +28,41 @@ const userSchema = new mongoose.Schema(
       default: "user",
     },
 
-     // 🔽 ADD THESE (PROVIDER DETAILS)
-  category: {
-    type: String,
-  },
+    // PROVIDER DETAILS
+    businessName: {
+      type: String,
+    },
 
-  city: {
-    type: String,
-  },
+    category: {
+      type: String,
+    },
 
-  location: {
-    type: String,
-  },
+    city: {
+      type: String,
+    },
 
-  about: {
-    type: String,
-  },
+    location: {
+      type: String,
+    },
 
-  rating: {
-    type: Number,
-    default: 4.5, // temporary
-  },
+    about: {
+      type: String,
+    },
 
-  services: {
-    type: [String],
-    default: [],
-  },
+    rating: {
+      type: Number,
+      default: 4.5,
+    },
 
+    services: {
+      type: [String],
+      default: [],
+    },
+
+    // STATS
     profileViews: { type: Number, default: 0 },
     leads: { type: Number, default: 0 },
     whatsappClicks: { type: Number, default: 0 },
-
-    businessName: String,
-    category: String,
-    location: String,
-    about: String,
   },
   { timestamps: true }
 );
