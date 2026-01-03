@@ -4,12 +4,13 @@ const {
   getAllProviders,
   getProviderById,
 } = require("../controllers/providerController");
+const { searchProviders } = require("../controllers/providerController");
+
+// 🔍 Search providers
+router.get("/search", searchProviders);
 
 router.get("/", getAllProviders);
 router.get("/:id", getProviderById);
-router.get("/test", (req, res) => {
-  res.json({ ok: true });
-});
 
 
 module.exports = router;
