@@ -24,6 +24,33 @@ const userSchema = new mongoose.Schema(
       default: "user",
     },
 
+     // 🔽 ADD THESE (PROVIDER DETAILS)
+  category: {
+    type: String,
+  },
+
+  city: {
+    type: String,
+  },
+
+  location: {
+    type: String,
+  },
+
+  about: {
+    type: String,
+  },
+
+  rating: {
+    type: Number,
+    default: 4.5, // temporary
+  },
+
+  services: {
+    type: [String],
+    default: [],
+  },
+
     profileViews: { type: Number, default: 0 },
     leads: { type: Number, default: 0 },
     whatsappClicks: { type: Number, default: 0 },
