@@ -26,6 +26,7 @@ app.use("/api/stats", statsRoutes);
 app.use("/api/dashboard", dashboardRoutes);
 app.use("/api/profile", profileRoutes);
 
+
 /* ---------- TEST ROUTE ---------- */
 app.get("/", (req, res) => {
   res.send("Findzy API running");
