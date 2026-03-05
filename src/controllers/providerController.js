@@ -13,6 +13,38 @@ exports.getAllProviders = async (req, res) => {
   }
 };
 
+// handle photo uploads from provider dashboard
+exports.uploadPhotos = async (req, res) => {
+  try {
+    if (!req.user || req.user.role !== "provider") {
+      return res.status(403).json({ message: "Only providers can upload photos" });
+    }
+
+    if (!req.files || req.files.length === 0) {
+      return res.status(400).json({ message: "No files uploaded" });
+    }
+
+    const urls = req.files.map((f) => {
+      // For demo purposes we'll return the local path; in production you'd
+      // upload to S3 or another storage and save the public URL.
+      return `/uploads/${f.filename}`;
+    });
+
+    const provider = await User.findById(req.user._id);
+    if (!provider) {
+      return res.status(404).json({ message: "Provider not found" });
+    }
+
+    provider.photos = [...(provider.photos || []), ...urls];
+    await provider.save();
+
+    res.json({ message: "Photos uploaded", urls, provider });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Failed to upload photos" });
+  }
+};
+
 //searching funtion
 exports.searchProviders = async (req, res) => {
   try {
@@ -44,7 +76,7 @@ exports.searchProviders = async (req, res) => {
 exports.getProviderById = async (req, res) => {
   try {
     const provider = await User.findById(req.params.id).select(
-      "businessName category location about profileViews leads whatsappClicks"
+      "businessName category location about phone whatsapp photos reviews averageRating profileViews leads whatsappClicks"
     );
 
     if (!provider) {

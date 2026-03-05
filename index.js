@@ -1,6 +1,7 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
+const path = require("path");
 require("dotenv").config();
 
 /* ---------- ROUTES ---------- */
@@ -18,6 +19,10 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+// serve uploaded images
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+
+
 /* ---------- API ROUTES ---------- */
 app.use("/api/auth", authRoutes);
 app.use("/api/providers", providerRoutes);
@@ -25,6 +30,8 @@ app.use("/api/reviews", reviewRoutes);
 app.use("/api/stats", statsRoutes);
 app.use("/api/dashboard", dashboardRoutes);
 app.use("/api/profile", profileRoutes);
+app.use("/api/chat", require("./src/routes/chatRoutes"));
+
 
 
 /* ---------- TEST ROUTE ---------- */

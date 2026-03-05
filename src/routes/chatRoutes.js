@@ -1,41 +1,9 @@
 const express = require("express");
 const router = express.Router();
-const Chat = require("../models/Chat");
-const auth = require("../middleware/auth");
+const { protect } = require("../middleware/authMiddleware");
+const { getChat, postMessage } = require("../controllers/chatController");
 
-// Get chat (or create)
-router.get("/:providerId", auth, async (req, res) => {
-  const userId = req.user.id;
-  const { providerId } = req.params;
-
-  let chat = await Chat.findOne({ user: userId, provider: providerId });
-
-  if (!chat) {
-    chat = await Chat.create({
-      user: userId,
-      provider: providerId,
-      messages: [],
-    });
-  }
-
-  res.json(chat);
-});
-
-// Send message
-router.post("/:providerId", auth, async (req, res) => {
-  const { text } = req.body;
-  const userId = req.user.id;
-  const { providerId } = req.params;
-
-  const chat = await Chat.findOne({ user: userId, provider: providerId });
-
-  chat.messages.push({
-    sender: "user",
-    text,
-  });
-
-  await chat.save();
-  res.json(chat);
-});
+// any authenticated user may initiate a chat with a provider
+router.route("/:id").get(protect, getChat).post(protect, postMessage);
 
 module.exports = router;

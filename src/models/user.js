@@ -59,6 +59,20 @@ const userSchema = new mongoose.Schema(
       default: [],
     },
 
+    // gallery and feedback
+    photos: {
+      type: [String],
+      default: [],
+    },
+    reviews: [
+      {
+        rating: { type: Number, required: true },
+        comment: String,
+        createdAt: { type: Date, default: Date.now },
+      },
+    ],
+    averageRating: { type: Number, default: 0 },
+
     // STATS
     profileViews: { type: Number, default: 0 },
     leads: { type: Number, default: 0 },
