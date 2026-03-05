@@ -4,7 +4,7 @@ const User = require("../models/user");
 exports.getAllProviders = async (req, res) => {
   try {
     const providers = await User.find({ role: "provider" }).select(
-      "businessName category location"
+      "_id businessName category location photos averageRating services city"
     );
 
     res.json(providers);
