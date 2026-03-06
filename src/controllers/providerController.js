@@ -76,7 +76,7 @@ exports.searchProviders = async (req, res) => {
 exports.getProviderById = async (req, res) => {
   try {
     const provider = await User.findById(req.params.id).select(
-      "businessName category location about phone whatsapp photos reviews averageRating profileViews leads whatsappClicks"
+      "businessName category location about phone whatsapp email photos reviews averageRating profileViews leads whatsappClicks"
     );
 
     if (!provider) {

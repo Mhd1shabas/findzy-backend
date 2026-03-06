@@ -20,7 +20,9 @@ const chatSchema = new mongoose.Schema(
         },
         text: {
           type: String,
-          required: true,
+        },
+        image: {
+          type: String, // URL to uploaded image
         },
         createdAt: {
           type: Date,

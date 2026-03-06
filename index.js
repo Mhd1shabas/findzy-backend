@@ -30,7 +30,6 @@ app.use("/api/reviews", reviewRoutes);
 app.use("/api/stats", statsRoutes);
 app.use("/api/dashboard", dashboardRoutes);
 app.use("/api/profile", profileRoutes);
-app.use("/api/chat", require("./src/routes/chatRoutes"));
 
 
 
