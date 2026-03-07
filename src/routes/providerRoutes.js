@@ -6,9 +6,10 @@ const {
   getAllProviders,
   getProviderById,
   uploadPhotos,
+  updateProvider,
 } = require("../controllers/providerController");
 const { searchProviders } = require("../controllers/providerController");
-const { protect, providerOnly } = require("../middleware/authMiddleware");
+const { protect } = require("../middleware/authMiddleware");
 
 // 🔍 Search providers
 router.get("/search", searchProviders);
@@ -16,11 +17,13 @@ router.get("/search", searchProviders);
 router.get("/", getAllProviders);
 router.get("/:id", getProviderById);
 
+// Update provider profile
+router.put("/:id", protect, updateProvider);
+
 // upload gallery photos (body should be form-data with field "photos")
 router.post(
   "/photos",
   protect,
-  providerOnly,
   upload.array("photos", 10),
   uploadPhotos
 );

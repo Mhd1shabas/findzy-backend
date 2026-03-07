@@ -28,10 +28,3 @@ exports.protect = async (req, res, next) => {
     return res.status(401).json({ message: "Token invalid" });
   }
 };
-
-exports.providerOnly = (req, res, next) => {
-  if (req.user.role !== "provider") {
-    return res.status(403).json({ message: "Access denied" });
-  }
-  next();
-};

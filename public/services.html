@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Services - FINDZY</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <header>
+        <nav>
+            <div class="nav-container">
+                <h1 class="logo">FINDZY</h1>
+                <ul class="nav-links">
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="services.html">Services</a></li>
+                    <li><a href="login.html" id="login-link">Login</a></li>
+                    <li><a href="register.html" id="register-link">Register</a></li>
+                    <li><a href="#" id="logout-link" style="display: none;">Logout</a></li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <section class="services-section">
+            <div class="container">
+                <h2>Available Services</h2>
+
+                <div class="filters">
+                    <input type="text" id="search" placeholder="Search services...">
+                    <select id="category">
+                        <option value="">All Categories</option>
+                        <option value="Academic Tutoring">Academic Tutoring</option>
+                        <option value="Programming">Programming</option>
+                        <option value="Design">Design</option>
+                        <option value="Writing">Writing</option>
+                        <option value="Photography">Photography</option>
+                        <option value="Other">Other</option>
+                    </select>
+                    <input type="text" id="college" placeholder="Filter by college...">
+                    <button id="filter-btn" class="btn-secondary">Filter</button>
+                </div>
+
+                <div id="services-list" class="services-grid">
+                    <!-- Services will be loaded here -->
+                </div>
+
+                <div id="loading" class="loading">Loading services...</div>
+                <div id="no-services" class="no-services" style="display: none;">No services found.</div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 FINDZY. All rights reserved.</p>
+    </footer>
+
+    <script src="js/auth.js"></script>
+    <script src="js/services.js"></script>
+</body>
+</html>

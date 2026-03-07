@@ -1,11 +1,22 @@
 const express = require("express");
 const router = express.Router();
-const { protect, providerOnly } = require("../middleware/authMiddleware");
+const { getDashboardStats, getDashboardActivity } = require("../controllers/dashboardController");
+const { protect } = require("../middleware/authMiddleware");
 
-router.get("/provider", protect, providerOnly, (req, res) => {
+// All dashboard routes require authentication
+router.use(protect);
+
+// Get dashboard statistics
+router.get("/stats", getDashboardStats);
+
+// Get dashboard activity feed
+router.get("/activity", getDashboardActivity);
+
+// Legacy provider dashboard route
+router.get("/provider", (req, res) => {
   res.json({
     message: "Welcome to Provider Dashboard",
-    user: req.user, // { id, role }
+    user: req.user,
   });
 });
 

@@ -1,10 +1,17 @@
 const User = require("../models/user");
+const Service = require("../models/service");
 
 // ✅ Get all providers (list page)
 exports.getAllProviders = async (req, res) => {
   try {
-    const providers = await User.find({ role: "provider" }).select(
-      "_id businessName category location photos averageRating services city"
+    // In an OLX-style platform, we show anyone who has a business name or offers services
+    const providers = await User.find({ 
+      $or: [
+        { businessName: { $exists: true, $ne: "" } },
+        { category: { $exists: true, $ne: "" } }
+      ]
+    }).select(
+      "_id name businessName category location university major skills services averageRating profileViews completedServices photos"
     );
 
     res.json(providers);
@@ -16,8 +23,8 @@ exports.getAllProviders = async (req, res) => {
 // handle photo uploads from provider dashboard
 exports.uploadPhotos = async (req, res) => {
   try {
-    if (!req.user || req.user.role !== "provider") {
-      return res.status(403).json({ message: "Only providers can upload photos" });
+    if (!req.user) {
+      return res.status(401).json({ message: "Only registered users can upload photos" });
     }
 
     if (!req.files || req.files.length === 0) {
@@ -45,29 +52,44 @@ exports.uploadPhotos = async (req, res) => {
   }
 };
 
-//searching funtion
+// searching function
 exports.searchProviders = async (req, res) => {
   try {
-    const { category, city } = req.query;
+    const { category, city, query } = req.query;
 
-    let query = {
-      role: "provider",
+    let dbQuery = {
+      $or: [
+        { businessName: { $exists: true, $ne: "" } },
+        { category: { $exists: true, $ne: "" } }
+      ]
     };
 
     if (category) {
-      query.category = { $regex: category, $options: "i" };
+      dbQuery.category = { $regex: category, $options: "i" };
     }
 
     if (city) {
-      query.city = { $regex: city, $options: "i" };
+      dbQuery.city = { $regex: city, $options: "i" };
     }
 
-    const providers = await User.find(query).select(
-      "name category city location rating services"
+    if (query) {
+      dbQuery.$or = [
+        { businessName: { $regex: query, $options: "i" } },
+        { category: { $regex: query, $options: "i" } },
+        { skills: { $regex: query, $options: "i" } },
+        { bio: { $regex: query, $options: "i" } },
+        { "services.name": { $regex: query, $options: "i" } },
+        { name: { $regex: query, $options: "i" } }
+      ];
+    }
+
+    const providers = await User.find(dbQuery).select(
+      "name businessName category city location university major bio skills averageRating photos services"
     );
 
     res.json(providers);
   } catch (error) {
+    console.error("Search error:", error);
     res.status(500).json({ message: "Search failed" });
   }
 };
@@ -76,15 +98,85 @@ exports.searchProviders = async (req, res) => {
 exports.getProviderById = async (req, res) => {
   try {
     const provider = await User.findById(req.params.id).select(
-      "businessName category location about phone whatsapp email photos reviews averageRating profileViews leads whatsappClicks"
+      "name email phone whatsapp university major yearOfStudy skills interests bio availability businessName category city location about phone whatsapp email photos reviews averageRating profileViews leads whatsappClicks completedServices"
     );
 
     if (!provider) {
       return res.status(404).json({ message: "Provider not found" });
     }
 
-    res.json(provider);
+    // Get provider's services
+    const Service = require("../models/service");
+    const services = await Service.find({
+      provider: req.params.id,
+      isActive: true
+    }).select("title description category price priceType duration level tags images");
+
+    res.json({
+      ...provider.toObject(),
+      services
+    });
   } catch (err) {
     res.status(500).json({ message: "Failed to fetch provider" });
+  }
+};
+// ✅ Update provider profile (owner only)
+exports.updateProvider = async (req, res) => {
+  try {
+    const provider = await User.findById(req.params.id);
+
+    if (!provider) {
+      return res.status(404).json({ message: "Provider not found" });
+    }
+
+    // Check ownership
+    // We check both userId and _id because in the current merged model, they might be the same
+    const ownerId = provider.userId ? provider.userId.toString() : provider._id.toString();
+    if (ownerId !== req.user.id) {
+      return res.status(403).json({ message: "You are not allowed to edit this provider profile" });
+    }
+
+    const {
+      businessName,
+      category,
+      city,
+      location,
+      about,
+      university,
+      major,
+      yearOfStudy,
+      skills,
+      bio,
+      availability,
+      phone,
+      whatsapp,
+      email
+    } = req.body;
+
+    const updatedProvider = await User.findByIdAndUpdate(
+      req.params.id,
+      {
+        businessName,
+        category,
+        city,
+        location,
+        about,
+        university,
+        major,
+        yearOfStudy,
+        skills,
+        bio,
+        availability,
+        phone,
+        whatsapp,
+        email
+      },
+      { new: true }
+    ).select("-password");
+
+    res.json({ message: "Profile updated successfully", provider: updatedProvider });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Failed to update profile" });
   }
 };

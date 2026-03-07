@@ -4,7 +4,7 @@ const User = require("../models/user");
 exports.getMyProfile = async (req, res) => {
   try {
     const user = await User.findById(req.user._id).select(
-      "businessName category location about"
+      "name email phone university major yearOfStudy skills interests bio availability businessName category city location about photos averageRating"
     );
 
     res.json(user);
@@ -16,12 +16,50 @@ exports.getMyProfile = async (req, res) => {
 // UPDATE provider profile
 exports.updateMyProfile = async (req, res) => {
   try {
-    const { businessName, category, location, about } = req.body;
+    const { 
+      name,
+      phone,
+      university,
+      major,
+      yearOfStudy,
+      skills,
+      interests,
+      bio,
+      availability,
+      businessName, 
+      category, 
+      city,
+      location, 
+      about, 
+      whatsapp, 
+      email,
+      photos
+    } = req.body;
 
     const user = await User.findByIdAndUpdate(
       req.user._id,
-      { businessName, category, location, about },
+      { 
+        name,
+        phone,
+        university,
+        major,
+        yearOfStudy,
+        skills,
+        interests,
+        bio,
+        availability,
+        businessName, 
+        category, 
+        city,
+        location, 
+        about, 
+        whatsapp, 
+        email,
+        photos
+      },
       { new: true }
+    ).select(
+      "name email phone university major yearOfStudy skills interests bio availability businessName category city location about photos averageRating"
     );
 
     res.json({ message: "Profile updated successfully", user });

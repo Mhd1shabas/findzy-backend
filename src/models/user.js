@@ -22,10 +22,38 @@ const userSchema = new mongoose.Schema(
 
     password: { type: String, required: true },
 
-    role: {
+    // STUDENT PROFILE DETAILS
+    university: {
       type: String,
-      enum: ["user", "provider"],
-      default: "user",
+    },
+
+    major: {
+      type: String,
+    },
+
+    yearOfStudy: {
+      type: String,
+      enum: ["1st Year", "2nd Year", "3rd Year", "4th Year", "Graduate", "Other"],
+    },
+
+    skills: {
+      type: [String],
+      default: [],
+    },
+
+    interests: {
+      type: [String],
+      default: [],
+    },
+
+    bio: {
+      type: String,
+    },
+
+    availability: {
+      type: String,
+      enum: ["Weekdays", "Weekends", "Flexible", "Part-time", "Full-time"],
+      default: "Flexible",
     },
 
     // PROVIDER DETAILS
@@ -54,21 +82,26 @@ const userSchema = new mongoose.Schema(
       default: 4.5,
     },
 
-    services: {
-      type: [String],
-      default: [],
-    },
+    services: [{
+      name: { type: String, required: true },
+      description: String,
+      price: Number,
+      duration: String, // e.g., "1 hour", "2 hours"
+      category: String,
+    }],
 
     // gallery and feedback
     photos: {
       type: [String],
       default: [],
     },
+
     reviews: [
       {
         rating: { type: Number, required: true },
         comment: String,
         createdAt: { type: Date, default: Date.now },
+        reviewer: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
       },
     ],
     averageRating: { type: Number, default: 0 },
@@ -77,6 +110,8 @@ const userSchema = new mongoose.Schema(
     profileViews: { type: Number, default: 0 },
     leads: { type: Number, default: 0 },
     whatsappClicks: { type: Number, default: 0 },
+    completedServices: { type: Number, default: 0 },
+    userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
   },
   { timestamps: true }
 );

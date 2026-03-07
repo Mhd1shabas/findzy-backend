@@ -52,7 +52,7 @@ exports.postMessage = async (req, res) => {
       chat = new Chat({ provider: providerId, user: userId, messages: [] });
     }
 
-    const sender = req.user.role === "provider" ? "provider" : "user";
+    const sender = userId.toString() === providerId ? "provider" : "user";
     chat.messages.push({ sender, text: text || '', image });
     await chat.save();
 
