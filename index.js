@@ -14,6 +14,9 @@ const statsRoutes = require("./src/routes/statsRoutes");
 const serviceRoutes = require("./src/routes/serviceRoutes");
 const requestRoutes = require("./src/routes/requestRoutes");
 const matchingRoutes = require("./src/routes/matchingRoutes");
+const userRoutes = require("./src/routes/userRoutes");
+const favoriteRoutes = require("./src/routes/favoriteRoutes");
+const bookingRoutes = require("./src/routes/bookingRoutes");
 
 
 const app = express();
@@ -39,6 +42,9 @@ app.use("/api/requests", requestRoutes);
 app.use("/api/matching", matchingRoutes);
 app.use("/api/dashboard", dashboardRoutes);
 app.use("/api/profile", profileRoutes);
+app.use("/api/users", userRoutes);
+app.use("/api/favorites", favoriteRoutes);
+app.use("/api/bookings", bookingRoutes);
 
 
 

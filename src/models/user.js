@@ -111,7 +111,15 @@ const userSchema = new mongoose.Schema(
     leads: { type: Number, default: 0 },
     whatsappClicks: { type: Number, default: 0 },
     completedServices: { type: Number, default: 0 },
-    userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+    favorites: {
+      type: [
+        {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "Service",
+        },
+      ],
+      default: [],
+    },
   },
   { timestamps: true }
 );

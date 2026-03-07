@@ -1,6 +1,7 @@
 const User = require("../models/user");
 const Service = require("../models/service");
 const Request = require("../models/request");
+const Booking = require("../models/booking");
 
 const getDashboardStats = async (req, res) => {
   try {
@@ -15,24 +16,17 @@ const getDashboardStats = async (req, res) => {
     // Count user's services
     const myServices = await Service.countDocuments({ provider: userId });
 
-    // Count requests where user is either requester or provider
+    // Count bookings (new system)
+    const totalBookings = await Booking.countDocuments({ userId: userId });
+    
+    // Total requests (legacy/extra)
     const totalRequests = await Request.countDocuments({
       $or: [{ requester: userId }, { provider: userId }]
     });
 
-    const pendingRequests = await Request.countDocuments({
-      $or: [{ requester: userId }, { provider: userId }],
-      status: "pending"
-    });
-
-    const acceptedRequests = await Request.countDocuments({
-      $or: [{ requester: userId }, { provider: userId }],
-      status: "accepted"
-    });
-
-    const completedRequests = await Request.countDocuments({
-      $or: [{ requester: userId }, { provider: userId }],
-      status: "completed"
+    const completedBookings = await Booking.countDocuments({
+      userId: userId,
+      bookingStatus: "completed"
     });
 
     // Check if profile is complete (basic check)
@@ -44,10 +38,10 @@ const getDashboardStats = async (req, res) => {
     );
 
     res.json({
-      totalRequests,
-      pendingRequests,
-      acceptedRequests,
-      completedRequests,
+      totalRequests: totalBookings, // User dashboard expects "totalBookings" but let's use the field they expect
+      pendingRequests: totalBookings - completedBookings, 
+      completedRequests: completedBookings,
+      totalBookings: totalBookings,
       myServices,
       profileComplete,
       totalEarnings: user.totalEarnings || 0,
@@ -64,7 +58,25 @@ const getDashboardActivity = async (req, res) => {
     const userId = req.user.id;
     const activities = [];
 
-    // Get recent requests (both sent and received)
+    // Get recent bookings (new system)
+    const recentBookings = await Booking.find({ userId: userId })
+      .populate("serviceId", "title")
+      .populate("providerId", "name businessName")
+      .sort({ createdAt: -1 })
+      .limit(5);
+
+    for (const booking of recentBookings) {
+      activities.push({
+        _id: booking._id,
+        type: "booking_created",
+        title: `Service booked: "${booking.serviceId?.title || "Deleted Service"}"`,
+        description: `You booked this service from ${booking.providerId?.businessName || booking.providerId?.name || "Unknown"}`,
+        createdAt: booking.createdAt,
+        link: `/dashboard/bookings`,
+      });
+    }
+
+    // Get recent requests (legacy)
     const recentRequests = await Request.find({
       $or: [{ requester: userId }, { provider: userId }]
     })
@@ -72,7 +84,7 @@ const getDashboardActivity = async (req, res) => {
     .populate("requester", "name university")
     .populate("provider", "name businessName")
     .sort({ createdAt: -1 })
-    .limit(10);
+    .limit(5);
 
     // Convert requests to activities
     for (const request of recentRequests) {
