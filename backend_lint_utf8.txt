@@ -1,0 +1,45 @@
+﻿
+> findzy-server@1.0.0 lint
+> eslint .
+
+
+C:\Findzy\backend\eslint.config.mjs
+  1:1  error  Parsing error: 'import' and 'export' may appear only with 'sourceType: module'
+
+C:\Findzy\backend\server.js
+  102:25  warning  'next' is defined but never used  no-unused-vars
+
+C:\Findzy\backend\src\controllers\authController.js
+  22:11  warning  'user' is assigned a value but never used  no-unused-vars
+
+C:\Findzy\backend\src\controllers\chatController.js
+   4:7  warning  'fs' is assigned a value but never used      no-unused-vars
+  17:7  warning  'upload' is assigned a value but never used  no-unused-vars
+
+C:\Findzy\backend\src\controllers\favoriteController.js
+  2:7  warning  'Service' is assigned a value but never used  no-unused-vars
+
+C:\Findzy\backend\src\controllers\profileController.js
+  11:12  warning  'err' is defined but never used  no-unused-vars
+
+C:\Findzy\backend\src\controllers\providerController.js
+    2:7   warning  'Service' is assigned a value but never used  no-unused-vars
+   18:12  warning  'err' is defined but never used               no-unused-vars
+  119:12  warning  'err' is defined but never used               no-unused-vars
+
+C:\Findzy\backend\src\controllers\serviceController.js
+   2:7   warning  'User' is assigned a value but never used  no-unused-vars
+  18:14  warning  'e' is defined but never used              no-unused-vars
+  24:14  warning  'e' is defined but never used              no-unused-vars
+  30:14  warning  'e' is defined but never used              no-unused-vars
+  46:14  warning  'e' is defined but never used              no-unused-vars
+
+C:\Findzy\backend\src\controllers\statsController.js
+  25:12  warning  'err' is defined but never used  no-unused-vars
+  37:12  warning  'err' is defined but never used  no-unused-vars
+
+C:\Findzy\backend\src\middleware\authMiddleware.js
+  27:12  warning  'error' is defined but never used  no-unused-vars
+
+Γ£û 18 problems (1 error, 17 warnings)
+
