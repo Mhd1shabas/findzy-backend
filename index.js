@@ -26,14 +26,17 @@ const app = express();
 const allowedOrigins = [
   "http://localhost:3000",
   "http://127.0.0.1:3000",
-  process.env.FRONTEND_URL // Will be populated in prod, i.e. https://findzy-client.vercel.app
+  "https://findzy-frontend.vercel.app",
+  process.env.FRONTEND_URL
 ].filter(Boolean);
 
 app.use(cors({
   origin: function (origin, callback) {
-    if (!origin || allowedOrigins.includes(origin)) {
+    console.log(`[CORS Check] index.js - Origin: ${origin || 'None'}`);
+    if (!origin || allowedOrigins.includes(origin) || process.env.NODE_ENV === 'development') {
       callback(null, true);
     } else {
+      console.log(`[CORS Blocked] index.js - ${origin}`);
       callback(new Error("Not allowed by CORS"));
     }
   },
