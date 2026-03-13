@@ -21,8 +21,17 @@ const notificationRoutes = require("./src/routes/notificationRoutes");
 
 
 const app = express();
+const PORT = process.env.PORT || 5000;
 
 /* ---------- MIDDLEWARE ---------- */
+app.use(express.json());
+app.use((req, res, next) => {
+  const origin = req.headers.origin;
+  console.log(`[${new Date().toLocaleString()}] 🔍 index.js - ${req.method} ${req.url}`);
+  console.log(`- Origin: ${origin || 'None'}`);
+  next();
+});
+
 const allowedOrigins = [
   "http://localhost:3000",
   "http://127.0.0.1:3000",
@@ -32,7 +41,6 @@ const allowedOrigins = [
 
 app.use(cors({
   origin: function (origin, callback) {
-    console.log(`[CORS Check] index.js - Origin: ${origin || 'None'}`);
     if (!origin || allowedOrigins.includes(origin) || process.env.NODE_ENV === 'development') {
       callback(null, true);
     } else {
@@ -41,14 +49,14 @@ app.use(cors({
     }
   },
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],
-  credentials: true
+  credentials: true,
+  allowedHeaders: ["Content-Type", "Authorization"]
 }));
-app.use(express.json());
 
 // serve uploaded images
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
-// serve frontend static files
+// serve frontend static files (if any)
 app.use(express.static(path.join(__dirname, "public")));
 
 
@@ -68,6 +76,22 @@ app.use("/api/bookings", bookingRoutes);
 app.use("/api/notifications", notificationRoutes);
 
 
+/* ---------- ROOT & HEALTH ROUTES ---------- */
+app.get("/", (req, res) => {
+  res.status(200).json({
+    message: "Findzy API is running (via index.js)",
+    status: "ok",
+    environment: process.env.NODE_ENV || "development"
+  });
+});
+
+app.get("/health", (req, res) => {
+  res.status(200).json({
+    status: "ok",
+    mongodb: mongoose.connection.readyState === 1 ? "connected" : "disconnected"
+  });
+});
+
 
 /* ---------- GLOBAL ERROR HANDLER ---------- */
 app.use((err, req, res, next) => {
@@ -78,18 +102,11 @@ app.use((err, req, res, next) => {
   });
 });
 
-/* ---------- TEST ROUTE ---------- */
-app.get("/", (req, res) => {
-  res.send("Findzy API running. Status: OK");
-});
-
 /* ---------- SERVER + DB ---------- */
-const PORT = process.env.PORT || 5000;
-
 mongoose
   .connect(process.env.MONGO_URI)
   .then(() => {
-    console.log("✅ MongoDB connected");
+    console.log("✅ MongoDB connected successfully");
     app.listen(PORT, () => {
       console.log(`🚀 Server running on port ${PORT}`);
     });
@@ -97,3 +114,4 @@ mongoose
   .catch((err) => {
     console.error("❌ MongoDB connection error:", err.message);
   });
+
