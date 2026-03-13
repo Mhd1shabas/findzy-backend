@@ -71,6 +71,9 @@ app.use(cors(corsOptions));
 // Serve uploaded images
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
+// Serve frontend static files
+app.use(express.static(path.join(__dirname, "public")));
+
 /* ---------- ROOT & HEALTH ROUTES ---------- */
 app.get("/", (req, res) => {
   res.status(200).json({
