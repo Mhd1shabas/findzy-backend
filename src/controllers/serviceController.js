@@ -146,7 +146,7 @@ exports.getAllServices = async (req, res) => {
 exports.getServiceById = async (req, res) => {
   try {
     const service = await Service.findById(req.params.id)
-      .populate('provider', 'name businessName university major email phone whatsapp about averageRating profileViews skills services')
+      .populate('provider', 'name businessName university major email phone whatsapp about averageRating profileViews skills services photos')
       .populate({
         path: 'provider',
         populate: {
