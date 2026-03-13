@@ -44,6 +44,8 @@ const corsOptions = {
       "https://findzy-frontend.vercel.app"
     ].filter(Boolean);
 
+    console.log(`[CORS Check] Request from Origin: ${origin || 'None'}`);
+
     if (!origin) return callback(null, true);
 
     const isLocalNetwork = origin.startsWith('http://192.168.') ||
@@ -53,9 +55,10 @@ const corsOptions = {
       origin.includes('127.0.0.1');
 
     if (allowedOrigins.includes(origin) || isLocalNetwork || process.env.NODE_ENV === 'development') {
+      console.log(`[CORS Allowed] ${origin}`);
       callback(null, true);
     } else {
-      console.log(`❌ CORS Blocked: ${origin}`);
+      console.log(`[CORS Blocked] ${origin}`);
       callback(new Error('Not allowed by CORS'));
     }
   },
