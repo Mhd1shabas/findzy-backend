@@ -34,8 +34,8 @@ exports.createService = async (req, res) => {
     const serviceImages = [];
     if (req.files && req.files.length > 0) {
       req.files.forEach((file) => {
-        // Form final URL based on backend route (assuming /uploads is served statically in index.js)
-        serviceImages.push(`${process.env.API_URL || 'http://localhost:5000'}/uploads/${file.filename}`);
+        // Save relative path to avoid host mismatches between local/prod
+        serviceImages.push(`/uploads/${file.filename}`);
       });
     }
 
