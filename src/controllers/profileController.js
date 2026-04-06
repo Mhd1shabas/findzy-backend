@@ -18,7 +18,12 @@ exports.updateMyProfile = async (req, res) => {
   try {
     const updateData = { ...req.body };
     delete updateData._id;
-    delete updateData.email; // Usually emails shouldn't be changed via simple profile update if unique
+    delete updateData.email;
+    delete updateData.password; // Never update password via simple profile PUT
+
+    // Keep about/bio in sync for compatibility
+    if (updateData.about) updateData.bio = updateData.about;
+    if (updateData.bio && !updateData.about) updateData.about = updateData.bio;
     const unsetData = {};
 
     // Prevent Mongoose ENUM validation errors gracefully
