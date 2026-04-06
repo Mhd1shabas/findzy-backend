@@ -107,6 +107,7 @@ exports.updateBookingStatus = async (req, res) => {
     let msg = `Your booking for ${serviceName} was updated to ${status}.`;
     if (status === 'accepted') msg = `Great news! Your booking for ${serviceName} was accepted.`;
     if (status === 'rejected') msg = `Sorry! Your booking for ${serviceName} was rejected.`;
+    if (status === 'in_progress') msg = `Work has started on your booking for ${serviceName}.`;
     if (status === 'completed') msg = `Your booking for ${serviceName} is marked complete!`;
 
     await Notification.create({

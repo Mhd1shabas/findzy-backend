@@ -59,7 +59,8 @@ exports.createService = async (req, res) => {
       location,
       requirements,
       portfolioLinks,
-      serviceImages
+      serviceImages,
+      college: req.user.college || req.user.university
     });
 
     await service.save();
@@ -88,13 +89,15 @@ exports.getAllServices = async (req, res) => {
       sort = "createdAt",
       order = "desc",
       page = 1,
-      limit = 20
+      limit = 20,
+      college
     } = req.query;
 
     // Build a simple filter — only match active services
     let matchQuery = { isActive: true };
 
     if (category) matchQuery.category = { $regex: category, $options: 'i' };
+    if (college) matchQuery.college = college;
 
     if (minPrice || maxPrice) {
       matchQuery.price = {};
@@ -117,7 +120,7 @@ exports.getAllServices = async (req, res) => {
     const skip = (parseInt(page) - 1) * parseInt(limit);
 
     let query = Service.find(matchQuery)
-      .populate('provider', 'name businessName university major averageRating photos')
+      .populate('provider', 'name businessName university college major averageRating photos')
       .sort(sortOptions)
       .skip(skip)
       .limit(parseInt(limit));
@@ -268,7 +271,7 @@ exports.getCategories = async (req, res) => {
 // ✅ Search services with advanced matching
 exports.searchServices = async (req, res) => {
   try {
-    const { q, category, location, minPrice, maxPrice, level } = req.query;
+    const { q, category, location, minPrice, maxPrice, level, college } = req.query;
 
     let query = { isActive: true };
 
@@ -281,6 +284,7 @@ exports.searchServices = async (req, res) => {
     if (category) query.category = category;
     if (location) query.location = location;
     if (level) query.level = level;
+    if (college) query.college = college;
 
     if (minPrice || maxPrice) {
       query.price = {};
@@ -289,7 +293,7 @@ exports.searchServices = async (req, res) => {
     }
 
     const services = await Service.find(query)
-      .populate('provider', 'name businessName averageRating university major')
+      .populate('provider', 'name businessName averageRating university college major')
       .sort({ score: { $meta: "textScore" }, createdAt: -1 })
       .limit(50);
 

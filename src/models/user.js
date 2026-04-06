@@ -27,6 +27,10 @@ const userSchema = new mongoose.Schema(
       type: String,
     },
 
+    college: {
+      type: String,
+    },
+
     major: {
       type: String,
     },

@@ -4,7 +4,7 @@ const User = require("../models/user");
 exports.getMyProfile = async (req, res) => {
   try {
     const user = await User.findById(req.user._id).select(
-      "name email phone university major yearOfStudy skills interests bio availability businessName category city location about photos averageRating"
+      "name email phone university college major yearOfStudy skills interests bio availability businessName category city location about photos averageRating"
     );
 
     res.json(user);
@@ -17,6 +17,8 @@ exports.getMyProfile = async (req, res) => {
 exports.updateMyProfile = async (req, res) => {
   try {
     const updateData = { ...req.body };
+    delete updateData._id;
+    delete updateData.email; // Usually emails shouldn't be changed via simple profile update if unique
     const unsetData = {};
 
     // Prevent Mongoose ENUM validation errors gracefully
@@ -38,7 +40,7 @@ exports.updateMyProfile = async (req, res) => {
       updatePayload,
       { new: true }
     ).select(
-      "name email phone university major yearOfStudy skills interests bio availability businessName category city location about photos averageRating"
+      "name email phone university college major yearOfStudy skills interests bio availability businessName category city location about photos averageRating"
     );
 
     res.json({ message: "Profile updated successfully", user });

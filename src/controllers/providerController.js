@@ -11,7 +11,7 @@ exports.getAllProviders = async (req, res) => {
         { category: { $exists: true, $ne: "" } }
       ]
     }).select(
-      "_id name businessName category location university major skills services averageRating profileViews completedServices photos"
+      "_id name businessName category college location university major skills services averageRating profileViews completedServices photos"
     );
 
     res.json(providers);
@@ -55,7 +55,7 @@ exports.uploadPhotos = async (req, res) => {
 // searching function
 exports.searchProviders = async (req, res) => {
   try {
-    const { category, city, query } = req.query;
+    const { category, city, query, college } = req.query;
 
     let dbQuery = {
       $or: [
@@ -72,6 +72,10 @@ exports.searchProviders = async (req, res) => {
       dbQuery.city = { $regex: city, $options: "i" };
     }
 
+    if (college) {
+      dbQuery.college = college;
+    }
+
     if (query) {
       dbQuery.$or = [
         { businessName: { $regex: query, $options: "i" } },
@@ -84,7 +88,7 @@ exports.searchProviders = async (req, res) => {
     }
 
     const providers = await User.find(dbQuery).select(
-      "name businessName category city location university major bio skills averageRating photos services"
+      "name businessName category college city location university major bio skills averageRating photos services"
     );
 
     res.json(providers);
@@ -98,7 +102,7 @@ exports.searchProviders = async (req, res) => {
 exports.getProviderById = async (req, res) => {
   try {
     const provider = await User.findById(req.params.id).select(
-      "name email phone whatsapp university major yearOfStudy skills interests bio availability businessName category city location about phone whatsapp email photos reviews averageRating profileViews leads whatsappClicks completedServices"
+      "name email phone whatsapp university college major yearOfStudy skills interests bio availability businessName category city location about phone whatsapp email photos reviews averageRating profileViews leads whatsappClicks completedServices"
     );
 
     if (!provider) {
@@ -136,41 +140,14 @@ exports.updateProvider = async (req, res) => {
       return res.status(403).json({ message: "You are not allowed to edit this provider profile" });
     }
 
-    const {
-      businessName,
-      category,
-      city,
-      location,
-      about,
-      university,
-      major,
-      yearOfStudy,
-      skills,
-      bio,
-      availability,
-      phone,
-      whatsapp,
-      email
-    } = req.body;
+    const updateData = { ...req.body };
+    delete updateData._id;
+    delete updateData.userId;
+    delete updateData.email;
 
     const updatedProvider = await User.findByIdAndUpdate(
       req.params.id,
-      {
-        businessName,
-        category,
-        city,
-        location,
-        about,
-        university,
-        major,
-        yearOfStudy,
-        skills,
-        bio,
-        availability,
-        phone,
-        whatsapp,
-        email
-      },
+      updateData,
       { new: true }
     ).select("-password");
 

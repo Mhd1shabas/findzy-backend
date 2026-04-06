@@ -17,6 +17,10 @@ const serviceSchema = new mongoose.Schema(
       required: true,
     },
 
+    college: {
+      type: String,
+    },
+
     subcategory: {
       type: String,
     },
@@ -92,5 +96,6 @@ serviceSchema.index({ category: 1, subcategory: 1 });
 serviceSchema.index({ provider: 1 });
 serviceSchema.index({ price: 1 });
 serviceSchema.index({ isActive: 1 });
+serviceSchema.index({ college: 1 });
 
 module.exports = mongoose.model("Service", serviceSchema);
